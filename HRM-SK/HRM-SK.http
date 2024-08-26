@@ -1,0 +1,6 @@
+@HRM_SK_HostAddress = http://localhost:5283
+
+GET {{HRM_SK_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
