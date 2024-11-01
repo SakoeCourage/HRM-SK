@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Carter;
 using FluentValidation;
+using HRM_SK.Contracts;
 using HRM_SK.Database;
+using HRM_SK.Entities.HRMActivities;
 using HRM_SK.Entities.Staff;
 using HRM_SK.Serivices.Mail_Service;
 using HRM_SK.Shared;
@@ -13,12 +15,15 @@ namespace HRM_SK.Features.Staff_Posting
 {
     public static class NewStaffPosting
     {
+
+
         public class NewStaffPostingRequest : IRequest<Shared.Result<string>>
         {
             public Guid staffId { get; set; }
-            public Guid directorateId { get; set; }
-            public Guid departmentId { get; set; }
-            public Guid unitId { get; set; }
+            public Guid? directorateId { get; set; }
+            public Guid? departmentId { get; set; } = null;
+            public Guid? unitId { get; set; } = null;
+            public String? postingOption { get; set; } = "internal";
             public DateOnly postingDate { get; set; }
         }
 
@@ -30,12 +35,17 @@ namespace HRM_SK.Features.Staff_Posting
                    .NotEmpty();
                 RuleFor(c => c.directorateId)
                     .NotEmpty();
-                RuleFor(c => c.departmentId)
+                RuleFor(c => c.postingOption)
                     .NotEmpty();
-                RuleFor(c => c.unitId)
-                    .NotEmpty();
-                RuleFor(c => c.postingDate)
-                    .NotEmpty();
+
+                When(c => c.postingOption == "internal", () =>
+                {
+                    RuleFor(c => c.departmentId)
+                        .NotEmpty().WithMessage("Department ID is required when the posting option is internal.");
+
+                    RuleFor(c => c.unitId)
+                        .NotEmpty().WithMessage("Unit ID is required when the posting option is internal.");
+                });
             }
         }
         internal sealed class Handler : IRequestHandler<NewStaffPostingRequest, Shared.Result<string>>
@@ -44,12 +54,14 @@ namespace HRM_SK.Features.Staff_Posting
             private readonly IValidator<NewStaffPostingRequest> _validator;
             private readonly MailService _mailService;
             private readonly IMapper _mapper;
-            public Handler(IMapper mapper, MailService mailService, DatabaseContext dbContext, IValidator<NewStaffPostingRequest> validator)
+            private readonly ISender _sender;
+            public Handler(IMapper mapper, MailService mailService, DatabaseContext dbContext, IValidator<NewStaffPostingRequest> validator, ISender sender)
             {
                 _dbContext = dbContext;
                 _validator = validator;
                 _mailService = mailService;
                 _mapper = mapper;
+                _sender = sender;
             }
 
             public async Task<Result<string>> Handle(NewStaffPostingRequest request, CancellationToken cancellationToken)
@@ -61,6 +73,12 @@ namespace HRM_SK.Features.Staff_Posting
                     return Shared.Result.Failure<string>(Error.ValidationError(validationResult));
                 }
 
+                var validOption = StaffPostingOptions.parseOption(request.postingOption);
+                if (validOption is null)
+                {
+                    return Shared.Result.Failure<string>(Error.CreateNotFoundError($"Invalid Request option accepted internal, external"));
+                }
+
                 var existingStaff = await _dbContext.Staff
                     .Include(s => s.currentAppointment).FirstOrDefaultAsync(s => s.Id == request.staffId);
 
@@ -69,23 +87,105 @@ namespace HRM_SK.Features.Staff_Posting
                     return Shared.Result.Failure<string>(Error.CreateNotFoundError("Staff Data Not Found"));
                 }
 
+                if (existingStaff.status == StaffStatusTypes.inActive)
+                {
+                    return Shared.Result.Failure<string>(Error.CreateNotFoundError("Cannot proceed with current staff"));
+                }
+
                 if (existingStaff?.currentAppointment is null)
                 {
-                    return Shared.Result.Failure<string>(Error.CreateNotFoundError("Staff Appointment Data Not Found"));
+                    return Shared.Result.Failure<string>(Error.CreateNotFoundError("Staff appointment data was not found"));
                 }
 
-                var unit = await _dbContext.Unit.Include(u => u.directorate).Include(u => u.department).FirstOrDefaultAsync(u => u.Id == request.unitId);
+                var currentPostingData = await _dbContext.StaffPosting.FirstOrDefaultAsync(sp => sp.staffId == request.staffId);
 
-                if (unit is null)
+                if (currentPostingData is not null)
                 {
-                    return Shared.Result.Failure<string>(Error.CreateNotFoundError("Unit Data Not Found"));
-                }
 
-                var alreadyPosted = await _dbContext.StaffPosting.AnyAsync(sp => sp.staffId == request.staffId);
+                    {
+                        using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync())
 
-                if (alreadyPosted)
-                {
-                    return Shared.Result.Failure<string>(Error.BadRequest("Staff Already Posted"));
+                            try
+                            {
+                                var res = Shared.Result.Success<string>("Staff posting data updated successfully");
+
+                                if (validOption == "internal")
+                                {
+
+
+                                    if (currentPostingData.department is not null)
+                                    {
+                                        var isDepartmentChanged = currentPostingData.departmentId != request.departmentId;
+                                        var isUnitChanged = currentPostingData.unitId != request.unitId;
+
+                                        if (isDepartmentChanged || isUnitChanged)
+                                        {
+                                            var newStaffPostingHistory = new StaffPostingHistory
+                                            {
+                                                staffId = request.staffId,
+                                                departmentId = request.departmentId,
+                                                unitId = request.unitId,
+                                                postingDate = request.postingDate,
+                                                postingOption = validOption,
+                                                directorateId = request.directorateId,
+                                                createdAt = DateTime.UtcNow,
+                                                updatedAt = DateTime.UtcNow
+                                            };
+                                            _dbContext.StaffPostingHistory.Add(newStaffPostingHistory);
+                                        }
+                                    }
+                                }
+
+
+                                if (validOption == "external")
+                                {
+                                    existingStaff.status = StaffStatusTypes.inActive;
+                                    var separationResult = new Seperation
+                                    {
+                                        StaffId = existingStaff.Id,
+                                        Reason = "Posting Separation",
+                                        DateOfSeparation = DateOnly.FromDateTime(DateTime.UtcNow),
+                                        comment = "Staff separated due to external posting"
+                                    };
+
+
+                                    var newStaffPostingHistory = new StaffPostingHistory
+                                    {
+                                        staffId = request.staffId,
+                                        departmentId = request?.departmentId ?? null,
+                                        unitId = request?.unitId ?? null,
+                                        postingDate = request.postingDate,
+                                        postingOption = validOption,
+                                        directorateId = request.directorateId,
+                                        createdAt = DateTime.UtcNow,
+                                        updatedAt = DateTime.UtcNow
+                                    };
+
+                                    _dbContext.Seperation.Add(separationResult);
+                                    _dbContext.StaffPostingHistory.Add(newStaffPostingHistory);
+
+                                    res = Shared.Result.Success<string>("Staff Separation Successful");
+                                }
+
+                                currentPostingData.updatedAt = DateTime.UtcNow;
+                                currentPostingData.departmentId = request.departmentId;
+                                currentPostingData.postingDate = request.postingDate;
+                                currentPostingData.postingOption = validOption;
+                                currentPostingData.unitId = request?.unitId;
+                                currentPostingData.directorateId = request?.directorateId;
+
+                                await _dbContext.SaveChangesAsync();
+                                await dbTransaction.CommitAsync();
+                                return res;
+                            }
+                            catch (Exception ex)
+                            {
+                                await dbTransaction.RollbackAsync();
+                                return Shared.Result.Failure<string>(Error.BadRequest(ex.Message));
+                            };
+
+                    }
+
                 }
 
                 using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync())
@@ -100,6 +200,7 @@ namespace HRM_SK.Features.Staff_Posting
                             unitId = request.unitId,
                             directorateId = request.directorateId,
                             postingDate = request.postingDate,
+                            postingOption = validOption,
                             createdAt = DateTime.UtcNow,
                             updatedAt = DateTime.UtcNow
                         };
@@ -111,36 +212,19 @@ namespace HRM_SK.Features.Staff_Posting
                             departmentId = request.departmentId,
                             unitId = request.unitId,
                             postingDate = request.postingDate,
+                            postingOption = validOption,
                             directorateId = request.directorateId,
                             createdAt = DateTime.UtcNow,
                             updatedAt = DateTime.UtcNow
                         };
 
-                        //var emailDTO = new EmailDTO
-                        //{
-                        //    Subject = "Staff Posting",
-                        //    Body = EmailContracts.generateStaffPostingEmailBodyTemplate(new StaffPostingRecord(
-                        //    firstName: existingStaff.firstName,
-                        //    lastName: existingStaff.lastName,
-                        //    staffType: existingStaff.currentAppointment?.staffType ?? "",
-                        //    staffId: existingStaff.staffIdentificationNumber,
-                        //    unitName: unit.unitName,
-                        //    departmentName: unit.department.departmentName,
-                        //    directorateName: unit.directorate.directorateName,
-                        //    notionalDate: existingStaff.currentAppointment.notionalDate
-                        //    )),
-                        //    ToEmail = existingStaff.email,
-                        //    ToName = $"{existingStaff.firstName} {existingStaff.lastName}"
-                        //};
-
-                        //_mailService.SendMail(emailDTO);
 
                         _dbContext.StaffPosting.Add(newPostingData);
                         _dbContext.StaffPostingHistory.Add(newStaffPostingHistory);
 
                         await _dbContext.SaveChangesAsync();
                         await dbTransaction.CommitAsync();
-                        return Shared.Result.Success<string>("Staff Posting Success");
+                        return Shared.Result.Success<string>("Staff posted successfully");
                     }
                     catch (Exception ex)
                     {
@@ -173,6 +257,6 @@ public class MapNewStaffPostingEndpoint : ICarterModule
                 return Results.UnprocessableEntity(response.Error);
             }
             return Results.BadRequest();
-        }).WithTags("Staff-Posting");
+        }).WithTags("Staff-Posting-Transfer");
     }
 }

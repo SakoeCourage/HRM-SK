@@ -37,6 +37,7 @@ namespace HRM_SK.Extensions
             CreateMap<StaffChildrenDetail, StaffChildrenUpdateHistory>()
           .ForMember(dest => dest.Id, opt => opt.Ignore());
 
+            CreateMap<staffAccomodationResponseDto, StaffAccomodationDetail>().ReverseMap();
             CreateMap<StaffBioUpdateHistory, Staff>();
             CreateMap<Staff, StaffProfileResponse>().ReverseMap();
             CreateMap<Speciality, StaffSpecialityResponseDto>().ReverseMap();
@@ -45,7 +46,6 @@ namespace HRM_SK.Extensions
             CreateMap<StaffFamilyResponseDto, StaffFamilyDetail>().ReverseMap();
             CreateMap<StaffProfessionalLicenseDto, StaffProfessionalLincense>().ReverseMap();
             CreateMap<staffChildrenResponseDto, StaffChildrenDetail>().ReverseMap();
-            CreateMap<staffAccomodationResponseDto, StaffAccomodationDetail>().ReverseMap();
             CreateMap<StaffAppointmentResponseDto, StaffAppointment>().ReverseMap();
             CreateMap<StaffPosting, staffPostingResponseDto>().ReverseMap();
             CreateMap<AddStaffBioRequest, UpdateStaffBioRequest>().ReverseMap();

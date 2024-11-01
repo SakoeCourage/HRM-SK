@@ -34,30 +34,31 @@ namespace HRM_SK.Features.Staff_Children
         }
     }
 
-    public class MapDeleteStaffChildEnpoint : ICarterModule
+}
+
+public class MapDeleteStaffChildEnpoint : ICarterModule
+{
+
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapDelete("api/children/{id}", async (ISender sender, Guid id) =>
         {
-            app.MapDelete("api/children/{id}", async (ISender sender, Guid id) =>
+            var response = await sender.Send(new DeleteStaffChildDataRequest
             {
-                var response = await sender.Send(new DeleteStaffChildDataRequest
-                {
-                    Id = id,
-                });
+                Id = id,
+            });
 
 
-                if (response.IsFailure)
-                {
-                    return Results.NotFound(response.Error);
-                }
+            if (response.IsFailure)
+            {
+                return Results.NotFound(response.Error);
+            }
 
-                return Results.Ok(response?.Value);
+            return Results.Ok(response?.Value);
 
-            }).WithTags("Staff Children Record")
-                  .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
-                  .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
-              ;
-        }
+        }).WithTags("Staff Children Record")
+              .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
+              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+          ;
     }
 }

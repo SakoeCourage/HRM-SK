@@ -33,27 +33,27 @@ namespace HRM_SK.Features.Staff_Family
             }
         }
     }
+}
 
-    public class MapDeleteStaffFamilyRecordEndpoint : ICarterModule
+public class MapDeleteStaffFamilyRecordEndpoint : ICarterModule
+{
+
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapDelete("api/staff-family/{staffId}", async (ISender sender, Guid staffId) =>
         {
-            app.MapDelete("api/staff-family/{staffId}", async (ISender sender, Guid staffId) =>
+            var response = await sender.Send(new DeleteStaffFamilyRecordRequest { staffId = staffId });
+
+            if (response.IsFailure)
             {
-                var response = await sender.Send(new DeleteStaffFamilyRecordRequest { staffId = staffId });
+                return Results.NotFound(response.Error);
+            }
 
-                if (response.IsFailure)
-                {
-                    return Results.NotFound(response.Error);
-                }
+            return Results.Ok(response?.Value);
 
-                return Results.Ok(response?.Value);
-
-            }).WithTags("Staff Family Record")
-                  .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
-                  .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
-              ;
-        }
+        }).WithTags("Staff Family Record")
+              .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
+              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+          ;
     }
 }

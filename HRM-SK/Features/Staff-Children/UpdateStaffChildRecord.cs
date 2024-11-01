@@ -39,6 +39,15 @@ namespace HRM_SK.Features.Staff_Children
             public async Task<Result<string>> Handle(UpdateStaffChildRequest request, CancellationToken cancellationToken)
             {
 
+                var duplicateChildren = await dbContext
+                   .StaffChildrenDetail
+                   .AnyAsync(data => data.staffId == request.staffId && data.childName.ToLower() == request.childName.ToLower() && data.Id != request.id);
+
+                if (duplicateChildren is true)
+                {
+                    return Shared.Result.Failure<string>(Error.BadRequest("Staff Child Already Exist"));
+                }
+
                 using (var dbTransaction = await dbContext.Database.BeginTransactionAsync())
                 {
 
@@ -82,32 +91,34 @@ namespace HRM_SK.Features.Staff_Children
             }
         }
     }
-    public class MapUpdateChildRecordEndpoint : ICarterModule
+
+}
+
+public class MapUpdateChildRecordEndpoint : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapPatch("api/children/{id}", async (ISender sender, AddStaffChildrenRequest request, Guid id) =>
         {
-            app.MapPatch("api/children/{id}", async (ISender sender, AddStaffChildrenRequest request, Guid id) =>
+            var response = await sender.Send(new UpdateStaffChildRequest
             {
-                var response = await sender.Send(new UpdateStaffChildRequest
-                {
-                    staffId = request.staffId,
-                    id = id,
-                    dateOfBirth = request.dateOfBirth,
-                    gender = request.gender,
-                    childName = request.childName
-                });
+                staffId = request.staffId,
+                id = id,
+                dateOfBirth = request.dateOfBirth,
+                gender = request.gender,
+                childName = request.childName
+            });
 
-                if (response.IsFailure)
-                {
-                    return Results.NotFound(response.Error);
-                }
+            if (response.IsFailure)
+            {
+                return Results.NotFound(response.Error);
+            }
 
-                return Results.Ok(response?.Value);
+            return Results.Ok(response?.Value);
 
-            }).WithTags("Staff Children Record")
-                  .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
-                  .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
-              ;
-        }
+        }).WithTags("Staff Children Record")
+              .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
+              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+          ;
     }
 }

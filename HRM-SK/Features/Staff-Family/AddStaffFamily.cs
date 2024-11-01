@@ -6,7 +6,7 @@ using HRM_SK.Entities.Staff;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static HRM_SK.Features.Staff_Professional_License.NewStaffProfessionaLicense;
+using static HRM_SK.Features.Staff_Family.AddStaffFamily;
 
 namespace HRM_SK.Features.Staff_Family
 {
@@ -18,8 +18,8 @@ namespace HRM_SK.Features.Staff_Family
             public Guid staffId { get; set; }
             public string fathersName { get; set; } = String.Empty;
             public string mothersName { get; set; } = String.Empty;
-            public string spouseName { get; set; } = String.Empty;
-            public string spousePhoneNumber { get; set; } = String.Empty;
+            public string? spouseName { get; set; } = String.Empty;
+            public string? spousePhoneNumber { get; set; } = String.Empty;
             public string nextOfKIN { get; set; } = String.Empty;
             public string nextOfKINPhoneNumber { get; set; } = String.Empty;
             public string emergencyPerson { get; set; } = String.Empty;
@@ -33,8 +33,6 @@ namespace HRM_SK.Features.Staff_Family
                 RuleFor(c => c.staffId).NotEmpty();
                 RuleFor(c => c.fathersName).NotEmpty();
                 RuleFor(c => c.mothersName).NotEmpty();
-                RuleFor(c => c.spouseName).NotEmpty();
-                RuleFor(c => c.spousePhoneNumber).NotEmpty();
                 RuleFor(c => c.nextOfKIN).NotEmpty();
                 RuleFor(c => c.nextOfKINPhoneNumber).NotEmpty();
                 RuleFor(c => c.emergencyPerson).NotEmpty();
@@ -121,28 +119,30 @@ namespace HRM_SK.Features.Staff_Family
         }
     }
 
-    public class MapAddStaffFamilyEndpoint : ICarterModule
+
+}
+
+public class MapAddStaffFamilyEndpoint : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapPost("api/staff-family/update-or-new",
+        async (ISender sender, AddStaffFamilyRequest request) =>
         {
-            app.MapPost("api/staff-family/update-or-new",
-            async (ISender sender, ProfessionalLIncenceRequest request) =>
+            var response = await sender.Send(request);
+
+            if (response.IsSuccess)
             {
-                var response = await sender.Send(request);
+                return Results.Ok(response.Value);
+            }
 
-                if (response.IsSuccess)
-                {
-                    return Results.Ok(response.Value);
-                }
+            if (response.IsFailure)
+            {
+                return Results.UnprocessableEntity(response.Error);
+            }
 
-                if (response.IsFailure)
-                {
-                    return Results.UnprocessableEntity(response.Error);
-                }
+            return Results.BadRequest("Something Went Wrong");
 
-                return Results.BadRequest("Something Went Wrong");
-
-            }).WithTags("Staff Family Record");
-        }
+        }).WithTags("Staff Family Record");
     }
 }

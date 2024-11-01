@@ -4,6 +4,7 @@ using HRM_SK.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRM_SK.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241008104316_Added Posting History")]
+    partial class AddedPostingHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1911,13 +1914,11 @@ namespace HRM_SK.Migrations
                 {
                     b.HasOne("HRM_SK.Entities.Department", "department")
                         .WithMany()
-                        .HasForeignKey("departmentId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("departmentId");
 
                     b.HasOne("HRM_SK.Entities.Directorate", "directorate")
                         .WithMany()
-                        .HasForeignKey("directorateId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("directorateId");
 
                     b.HasOne("HRM_SK.Entities.Staff.Staff", "Staff")
                         .WithMany("transferHistory")
@@ -1927,8 +1928,7 @@ namespace HRM_SK.Migrations
 
                     b.HasOne("HRM_SK.Entities.Unit", "unit")
                         .WithMany()
-                        .HasForeignKey("unitId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("unitId");
 
                     b.Navigation("Staff");
 

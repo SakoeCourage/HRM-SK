@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using static HRM_SK.Features.Staff_Management.GetStaffPostingTransfersSeparationListt;
 
 namespace HRM_SK.Extensions
 {
@@ -13,6 +14,8 @@ namespace HRM_SK.Extensions
         public static List<Type> enumTypes = new List<Type>
         {
             typeof(StaffListFilter),
+            typeof(StaffStatus),
+            typeof(TransferListFilters)
         };
 
         public static void MapEnumsToString(SwaggerGenOptions options, IEnumerable<Type> enumTypes)

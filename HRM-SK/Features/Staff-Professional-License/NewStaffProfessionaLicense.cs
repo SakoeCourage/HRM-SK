@@ -106,30 +106,30 @@ namespace HRM_SK.Features.Staff_Professional_License
             }
         }
     }
+}
 
-    public class MappStaffPLEndpoint : ICarterModule
+public class MappStaffPLEndpoint : ICarterModule
+{
+
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapPost("api/staff-professional-license/update-or-new",
+        async (ISender sender, ProfessionalLIncenceRequest request) =>
         {
-            app.MapPost("api/staff-professional-license/update-or-new",
-            async (ISender sender, ProfessionalLIncenceRequest request) =>
+            var response = await sender.Send(request);
+
+            if (response.IsSuccess)
             {
-                var response = await sender.Send(request);
+                return Results.Ok(response.Value);
+            }
 
-                if (response.IsSuccess)
-                {
-                    return Results.Ok(response.Value);
-                }
+            if (response.IsFailure)
+            {
+                return Results.UnprocessableEntity(response.Error);
+            }
 
-                if (response.IsFailure)
-                {
-                    return Results.UnprocessableEntity(response.Error);
-                }
+            return Results.BadRequest("Something Went Wrong");
 
-                return Results.BadRequest("Something Went Wrong");
-
-            }).WithTags("Staff Professional License Record");
-        }
+        }).WithTags("Staff Professional License Record");
     }
 }

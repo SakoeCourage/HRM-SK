@@ -11,8 +11,8 @@ namespace HRM_SK.Entities.Staff
         public DateTime? updatedAt { get; set; } = DateTime.UtcNow;
         public string fathersName { get; set; } = String.Empty;
         public string mothersName { get; set; } = String.Empty;
-        public string spouseName { get; set; } = String.Empty;
-        public string spousePhoneNumber { get; set; } = String.Empty;
+        public string? spouseName { get; set; } = String.Empty;
+        public string? spousePhoneNumber { get; set; } = String.Empty;
         public string nextOfKIN { get; set; } = String.Empty;
         public string nextOfKINPhoneNumber { get; set; } = String.Empty;
         public string emergencyPerson { get; set; } = String.Empty;

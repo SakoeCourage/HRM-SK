@@ -1,4 +1,5 @@
 ﻿using HRM_SK.Contracts;
+using HRM_SK.Entities.HRMActivities;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -44,7 +45,7 @@ namespace HRM_SK.Entities.Staff
         public StaffAppointment currentAppointment { get; set; }
         public ICollection<StaffAppointmentHistory> appointmentHistory { get; set; }
         public ICollection<StaffBioUpdateHistory> bioUpdateHistory { get; set; }
-
-
+        public Seperation separation { get; set; }
+        public ICollection<StaffPostingHistory> transferHistory { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Carter;
 using HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio;
+using HRM_SK.Contracts;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
 using HRM_SK.Shared;
@@ -35,6 +36,7 @@ namespace HRM_BACKEND_VSA.Domains.Staffs.GetStaffData
                 .ThenInclude(ap => ap.grade)
                 .Include(s => s.appointmentHistory)
                 .ThenInclude(sah => sah.grade)
+                .Include(st => st.separation)
                 .Select(s => new StaffDto
                 {
                     id = s.Id,
@@ -119,7 +121,16 @@ namespace HRM_BACKEND_VSA.Domains.Staffs.GetStaffData
                         grade = entry.grade
                     }).
                     FirstOrDefault()
-                    : null
+                    : null,
+                    separation = (s.separation != null) ? new SeperationDto
+                    {
+                        Id = s.separation.Id,
+                        createdAt = s.separation.createdAt,
+                        updatedAt = s.separation.updatedAt,
+                        Reason = s.separation.Reason,
+                        DateOfSeparation = s.separation.DateOfSeparation,
+                        comment = s.separation.comment
+                    } : null
                 })
                  .FirstOrDefaultAsync();
 

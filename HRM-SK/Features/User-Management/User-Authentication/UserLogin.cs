@@ -61,7 +61,10 @@ namespace HRM_BACKEND_VSA.Domains.HR_Management.User.User_Authentication
 
                 var userEmail = request.email;
                 //Checking if user Exist
-                var user = await _dbContext.User.FirstOrDefaultAsync(s => s.email == userEmail);
+                var user = await _dbContext.User
+                    .Include(user => user.staff)
+                    .FirstOrDefaultAsync(s => s.email == userEmail);
+
                 if (user == null) { return HRM_SK.Shared.Result.Failure<UserLoginResponse>(Error.BadRequest("Invalid Email or Password")); }
                 if (BCrypt.Net.BCrypt.Verify(request.password, user.password) is not true)
                 {

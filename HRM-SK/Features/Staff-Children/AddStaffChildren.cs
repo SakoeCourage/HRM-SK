@@ -5,6 +5,7 @@ using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
 using HRM_SK.Shared;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static HRM_SK.Features.Staff_Children.AddStaffChildren;
 
@@ -51,10 +52,21 @@ namespace HRM_SK.Features.Staff_Children
                     return Shared.Result.Failure<string>(Error.CreateNotFoundError("Staff Record Not Found"));
                 }
 
+                var duplicateChildren = await dbContext
+                    .StaffChildrenDetail
+                    .AnyAsync(staff => staff.staffId == request.staffId && staff.childName.ToLower() == request.childName.ToLower());
+
+                if (duplicateChildren is true)
+                {
+                    return Shared.Result.Failure<string>(Error.BadRequest("Staff Child Already Exist"));
+                }
+
                 using (var dbTransaction = await dbContext.Database.BeginTransactionAsync())
                 {
                     try
                     {
+
+
                         var newRecord = new StaffChildrenDetail
                         {
                             staffId = request.staffId,
@@ -81,29 +93,32 @@ namespace HRM_SK.Features.Staff_Children
             }
         }
     }
+}
 
-    public class MapStaffAddChildEndpoint : ICarterModule
+public class MapStaffAddChildEndpoint : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapPost("api/staff-children",
+        async (ISender sender, AddStaffChildrenRequest request) =>
         {
-            app.MapPost("api/staff-chidren",
-            async (ISender sender, AddStaffChildrenRequest request) =>
+            var response = await sender.Send(request);
+
+            if (response.IsSuccess)
             {
-                var response = await sender.Send(request);
+                return Results.Ok(response.Value);
+            }
 
-                if (response.IsSuccess)
-                {
-                    return Results.Ok(response.Value);
-                }
+            if (response.IsFailure)
+            {
+                return Results.UnprocessableEntity(response.Error);
+            }
 
-                if (response.IsFailure)
-                {
-                    return Results.UnprocessableEntity(response.Error);
-                }
+            return Results.BadRequest("Something Went Wrong");
 
-                return Results.BadRequest("Something Went Wrong");
-
-            }).WithTags("Staff Children Record");
-        }
+        })
+            .WithTags("Staff Children Record")
+            .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status422UnprocessableEntity))
+            .WithMetadata(new ProducesResponseTypeMetadata(StatusCodes.Status200OK));
     }
 }

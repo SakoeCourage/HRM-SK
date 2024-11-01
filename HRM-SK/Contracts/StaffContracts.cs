@@ -209,6 +209,17 @@ namespace HRM_SK.Contracts
     }
 
 
+    public class SeperationDto
+    {
+        public Guid Id { get; set; }
+        public DateTime createdAt { get; set; } = DateTime.UtcNow;
+        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
+        public string Reason { get; set; }
+        public DateOnly DateOfSeparation { get; set; }
+        public string? comment { get; set; }
+    }
+
+
     public class StaffListResponseDto
     {
         public Guid Id { get; set; }
@@ -237,6 +248,7 @@ namespace HRM_SK.Contracts
         public DepartmentDto? department { get; set; }
         public DirectorateDto? directorate { get; set; }
         public SpecialityDto? speciality { get; set; }
+        public SeperationDto? separation { get; set; }
         public Boolean hasBankDetail { get; set; }
         public Boolean hasFamilyDetail { get; set; }
         public Boolean hasProfessionalLincenseDetail { get; set; }
@@ -244,6 +256,33 @@ namespace HRM_SK.Contracts
         public Boolean hasPostingDetail { get; set; }
         public Boolean hasStaffAccomodationDetail { get; set; }
         public Boolean hasCurrentAppointmentDetail { get; set; }
+    }
 
+
+    public class StaffPostingListResponseDto
+    {
+        public Guid Id { get; set; }
+        public DateTime createdAt { get; set; } = DateTime.UtcNow;
+        public DateTime? updatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? lastSeen { get; set; }
+        public string title { get; set; } = string.Empty;
+        public string GPSAddress { get; set; } = string.Empty;
+        public string nationality { get; set; } = string.Empty;
+        public string staffIdentificationNumber { get; set; }
+        public string firstName { get; set; } = string.Empty;
+        public string lastName { get; set; } = string.Empty;
+        public string? otherNames { get; set; } = string.Empty;
+        public DateOnly? dateOfBirth { get; set; }
+        public string phone { get; set; } = string.Empty;
+        public string gender { get; set; } = string.Empty;
+        public string SNNITNumber { get; set; } = string.Empty;
+        public string email { get; set; } = string.Empty;
+        public string disability { get; set; } = string.Empty;
+        public string? passportPicture { get; set; } = string.Empty;
+        public string ECOWASCardNumber { get; set; } = string.Empty;
+        public string status { get; set; } = string.Empty;
+        public int transferCount { get; set; }
+        public Boolean isSeparated { get; set; }
+        public Boolean hasTransfers { get; set; }
     }
 }

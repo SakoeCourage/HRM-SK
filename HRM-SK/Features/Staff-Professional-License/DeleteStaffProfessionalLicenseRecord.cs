@@ -34,25 +34,27 @@ namespace HRM_SK.Features.Staff_Professional_License
         }
     }
 
-    public class mapDeleteAccodationRecordEndpoint : ICarterModule
+
+}
+
+public class mapDeleteAccodationRecordEndpoint : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapDelete("api/staff-professional-license/{staffId}", async (ISender sender, Guid staffId) =>
         {
-            app.MapDelete("api/staff-professional-license/{staffId}", async (ISender sender, Guid staffId) =>
+            var response = await sender.Send(new DeletePLRecordRequest { staffId = staffId });
+
+            if (response.IsFailure)
             {
-                var response = await sender.Send(new DeletePLRecordRequest { staffId = staffId });
+                return Results.NotFound(response.Error);
+            }
 
-                if (response.IsFailure)
-                {
-                    return Results.NotFound(response.Error);
-                }
+            return Results.Ok(response?.Value);
 
-                return Results.Ok(response?.Value);
-
-            }).WithTags("Staff Professional License Record")
-                  .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
-                  .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
-              ;
-        }
+        }).WithTags("Staff Professional License Record")
+              .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
+              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+          ;
     }
 }

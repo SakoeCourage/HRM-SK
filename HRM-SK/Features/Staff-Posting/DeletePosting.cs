@@ -58,6 +58,6 @@ public class MapDeletePostingEndpoin : ICarterModule
             }
 
             return Results.BadRequest();
-        }).WithTags("Staff-Posting");
+        }).WithTags("Staff-Posting-Transfer");
     }
 }

@@ -1,4 +1,5 @@
-﻿using HRM_SK.Entities.Staff;
+﻿using HRM_SK.Contracts;
+using HRM_SK.Entities.Staff;
 
 namespace HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio
 {
@@ -70,6 +71,7 @@ namespace HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio
         public string status { get; set; }
         public bool isApproved { get; set; }
         public bool isAlterable { get; set; }
+        public SeperationDto? separation { get; set; }
         public UnitDto? unit { get; set; }
         public DepartmentDto? department { get; set; }
         public DirectorateDto? directorate { get; set; }
@@ -78,5 +80,19 @@ namespace HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio
         public CategoryDto? category { get; set; }
         public StaffAppointment? currentAppointment { get; set; }
         public StaffAppointment? firstAppointment { get; set; }
+    }
+
+    public class staffTransferHistoryDto
+    {
+        public Guid Id { get; set; }
+        public Guid staffId { get; set; }
+        public DateTime createdAt { get; set; } = DateTime.UtcNow;
+        public DateTime? updatedAt { get; set; } = DateTime.UtcNow;
+        public String postingOption { get; set; }
+        public DateOnly postingDate { get; set; }
+        public UnitDto? unit { get; set; }
+        public DepartmentDto? department { get; set; }
+        public DirectorateDto? directorate { get; set; }
+
     }
 }

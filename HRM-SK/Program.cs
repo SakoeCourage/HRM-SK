@@ -8,11 +8,11 @@ using HRM_SK.Serivices.ImageKit;
 using HRM_SK.Serivices.Mail_Service;
 using HRM_SK.Serivices.Notification_Service;
 using HRM_SK.Services.SMS_Service;
-using HRM_SK.Shared;
 using HRM_SK.Utilities;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 
@@ -94,6 +94,8 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddMemoryCache();
+
 var MyAllowSpecificOrigins = "_allowedOrgins";
 
 builder.Services.AddCors(options =>
@@ -124,9 +126,15 @@ app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.MapCarter();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+
 app.Use(async (context, next) =>
 {
     var exemptPath = "/api/auth/user/login";
+
+    var stopwatch = Stopwatch.StartNew();
+    logger.LogInformation("Handling request: {RequestMethod} {RequestPath} at {StartTime}", context.Request.Method, context.Request.Path, DateTime.UtcNow);
 
     if (context.Request.Path.Value.Equals(exemptPath, StringComparison.OrdinalIgnoreCase))
     {
@@ -134,20 +142,27 @@ app.Use(async (context, next) =>
         return;
     }
 
-    if (!context.User.Identity.IsAuthenticated)
+    if (!context.User.Identity?.IsAuthenticated ?? true)
     {
+        logger.LogWarning("Unauthorized access attempt to:{RequestMethod} {RequestPath}", context.Request.Method, context.Request.Path);
+
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
-        var response = new Error("Unauthorized", StatusCodes.Status401Unauthorized.ToString());
+        var response = new { Error = "Unauthorized", StatusCode = StatusCodes.Status401Unauthorized };
+
         var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response);
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsync(jsonResponse);
-
         return;
     }
-
     await next();
+
+    stopwatch.Stop();
+    logger.LogInformation("Finished handling request:{RequestMethod}  {RequestPath} in {Duration} ms",
+         context.Request.Method, context.Request.Path, stopwatch.ElapsedMilliseconds);
 });
+
+
 app.UseHangfireDashboard("/hangfire");
 
 app.Run();

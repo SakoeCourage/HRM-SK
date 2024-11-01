@@ -14,6 +14,7 @@ namespace HRM_SK.Entities.Staff
         public Guid? directorateId { get; set; }
         public Guid? departmentId { get; set; }
         public Guid? unitId { get; set; }
+        public String postingOption { get; set; } = "internal";
         public DateOnly postingDate { get; set; }
         public Staff Staff { get; set; }
         public Unit unit { get; set; }

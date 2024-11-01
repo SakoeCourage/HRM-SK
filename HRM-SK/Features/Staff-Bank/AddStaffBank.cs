@@ -108,28 +108,30 @@ namespace HRM_SK.Features.Staff_Bank
         }
     }
 
-    public class MapNewBankRequestEndpoint : ICarterModule
+
+}
+
+public class MapNewBankRequestEndpoint : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        public void AddRoutes(IEndpointRouteBuilder app)
+        app.MapPost("api/staff-bank/update-or-new",
+        async (ISender sender, NewBankRequestData request) =>
         {
-            app.MapPost("api/staff-bank/update-or-new",
-            async (ISender sender, NewBankRequestData request) =>
+            var response = await sender.Send(request);
+
+            if (response.IsSuccess)
             {
-                var response = await sender.Send(request);
+                return Results.Ok(response.Value);
+            }
 
-                if (response.IsSuccess)
-                {
-                    return Results.Ok(response.Value);
-                }
+            if (response.IsFailure)
+            {
+                return Results.UnprocessableEntity(response.Error);
+            }
 
-                if (response.IsFailure)
-                {
-                    return Results.UnprocessableEntity(response.Error);
-                }
+            return Results.BadRequest("Something Went Wrong");
 
-                return Results.BadRequest("Something Went Wrong");
-
-            }).WithTags("Staff Bank Record");
-        }
+        }).WithTags("Staff Bank Record");
     }
 }

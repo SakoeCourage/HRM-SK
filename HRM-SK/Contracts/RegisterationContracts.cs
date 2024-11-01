@@ -38,6 +38,23 @@
     }
 
 
+    public static class StaffPostingOptions
+    {
+        private static readonly Dictionary<string, string> options = new Dictionary<string, string>
+        {
+            {"internal","internal"},
+            {"external", "external"}
+        };
+
+        public static string? parseOption(string? optionName)
+        {
+            string? initial = null;
+            options.TryGetValue(optionName, out initial);
+            return initial;
+        }
+    }
+
+
     public static class PaymentSourceRequestList
     {
         public static readonly string controllerPaymentSource = "CAGD";
@@ -72,6 +89,8 @@
     public static class StaffStatusTypes
     {
         public static readonly string active = "ACTIVE";
+        public static readonly string inActive = "INACTIVE";
+
 
     }
 

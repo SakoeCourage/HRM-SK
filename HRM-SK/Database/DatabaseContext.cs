@@ -1,4 +1,5 @@
 ﻿using HRM_SK.Entities;
+using HRM_SK.Entities.HRMActivities;
 using HRM_SK.Entities.Staff;
 using HRM_SK.Model.SMS;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace HRM_SK.Database
         {
 
         }
+        public DbSet<Seperation> Seperation { get; set; }
         public DbSet<SMSTemplate> SMSTemplate { get; set; }
         public DbSet<Bank> Bank { get; set; }
         public DbSet<SMSCampaignHistory> SMSCampaignHistory { get; set; }
@@ -65,6 +67,11 @@ namespace HRM_SK.Database
                  .HasForeignKey(sp => sp.unitId)
                  .OnDelete(DeleteBehavior.ClientCascade);
 
+            modelBuilder.Entity<Seperation>()
+                 .HasOne(u => u.Staff)
+                 .WithOne(s => s.separation)
+                 .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<StaffPosting>()
                  .HasOne(u => u.department)
                  .WithMany(d => d.staffPostings)
@@ -86,9 +93,10 @@ namespace HRM_SK.Database
 
             modelBuilder.Entity<StaffPostingHistory>()
                 .HasOne(sp => sp.Staff)
-                .WithMany()
+                .WithMany(sp => sp.transferHistory)
                 .HasForeignKey(sp => sp.staffId)
                 .OnDelete(DeleteBehavior.ClientCascade);
+
 
             modelBuilder.Entity<StaffAppointment>()
                 .HasOne(s => s.staff)
@@ -367,6 +375,24 @@ namespace HRM_SK.Database
                 .WithOne(s => s.unit)
                 .HasForeignKey<Unit>(u => u.unitHeadId)
                 .OnDelete(deleteBehavior: DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<StaffPostingHistory>()
+                .HasOne(sph => sph.unit)
+                .WithMany()
+                .HasForeignKey(sph => sph.unitId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<StaffPostingHistory>()
+                .HasOne(sph => sph.department)
+                .WithMany()
+                .HasForeignKey(sph => sph.departmentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<StaffPostingHistory>()
+                .HasOne(sph => sph.directorate)
+                .WithMany()
+                .HasForeignKey(sph => sph.directorateId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
     }

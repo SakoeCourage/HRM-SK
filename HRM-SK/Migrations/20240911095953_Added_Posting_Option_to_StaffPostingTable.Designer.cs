@@ -4,6 +4,7 @@ using HRM_SK.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRM_SK.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240911095953_Added_Posting_Option_to_StaffPostingTable")]
+    partial class Added_Posting_Option_to_StaffPostingTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,39 +247,6 @@ namespace HRM_SK.Migrations
                     b.HasIndex("gradeId");
 
                     b.ToTable("GradeStep");
-                });
-
-            modelBuilder.Entity("HRM_SK.Entities.HRMActivities.Seperation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly>("DateOfSeparation")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("StaffId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("createdAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("updatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StaffId")
-                        .IsUnique();
-
-                    b.ToTable("Seperation");
                 });
 
             modelBuilder.Entity("HRM_SK.Entities.Permission", b =>
@@ -1668,17 +1638,6 @@ namespace HRM_SK.Migrations
                     b.Navigation("grade");
                 });
 
-            modelBuilder.Entity("HRM_SK.Entities.HRMActivities.Seperation", b =>
-                {
-                    b.HasOne("HRM_SK.Entities.Staff.Staff", "Staff")
-                        .WithOne("separation")
-                        .HasForeignKey("HRM_SK.Entities.HRMActivities.Seperation", "StaffId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Staff");
-                });
-
             modelBuilder.Entity("HRM_SK.Entities.RoleHasPermissions", b =>
                 {
                     b.HasOne("HRM_SK.Entities.Permission", "permission")
@@ -1911,24 +1870,21 @@ namespace HRM_SK.Migrations
                 {
                     b.HasOne("HRM_SK.Entities.Department", "department")
                         .WithMany()
-                        .HasForeignKey("departmentId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("departmentId");
 
                     b.HasOne("HRM_SK.Entities.Directorate", "directorate")
                         .WithMany()
-                        .HasForeignKey("directorateId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("directorateId");
 
                     b.HasOne("HRM_SK.Entities.Staff.Staff", "Staff")
-                        .WithMany("transferHistory")
+                        .WithMany()
                         .HasForeignKey("staffId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("HRM_SK.Entities.Unit", "unit")
                         .WithMany()
-                        .HasForeignKey("unitId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("unitId");
 
                     b.Navigation("Staff");
 
@@ -2174,17 +2130,12 @@ namespace HRM_SK.Migrations
                     b.Navigation("professionalLincense")
                         .IsRequired();
 
-                    b.Navigation("separation")
-                        .IsRequired();
-
                     b.Navigation("staffAccomodation")
                         .IsRequired();
 
                     b.Navigation("staffChildren");
 
                     b.Navigation("staffPosting");
-
-                    b.Navigation("transferHistory");
 
                     b.Navigation("unit")
                         .IsRequired();
