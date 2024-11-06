@@ -49,7 +49,6 @@ namespace HRM_SK.Extensions
             CreateMap<StaffAppointmentResponseDto, StaffAppointment>().ReverseMap();
             CreateMap<StaffPosting, staffPostingResponseDto>().ReverseMap();
             CreateMap<AddStaffBioRequest, UpdateStaffBioRequest>().ReverseMap();
-
         }
     }
 }

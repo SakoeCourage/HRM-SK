@@ -17,6 +17,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var assembly = typeof(Program).Assembly;
 var AppKey = builder.Configuration.GetValue<string>("SiteSettings:AppKey");
 
@@ -38,8 +39,6 @@ builder.Services.AddRateLimiter(_ => _
         options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         options.QueueLimit = 2;
     }));
-
-
 
 builder.Services.AddScoped<ImageKit>(serviceProvider =>
 {

@@ -15,8 +15,6 @@ namespace HRM_SK.Features.Staff_Posting
 {
     public static class NewStaffPosting
     {
-
-
         public class NewStaffPostingRequest : IRequest<Shared.Result<string>>
         {
             public Guid staffId { get; set; }
@@ -72,6 +70,8 @@ namespace HRM_SK.Features.Staff_Posting
                 {
                     return Shared.Result.Failure<string>(Error.ValidationError(validationResult));
                 }
+                
+             
 
                 var validOption = StaffPostingOptions.parseOption(request.postingOption);
                 if (validOption is null)
@@ -101,23 +101,20 @@ namespace HRM_SK.Features.Staff_Posting
 
                 if (currentPostingData is not null)
                 {
-
                     {
                         using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync())
-
                             try
                             {
                                 var res = Shared.Result.Success<string>("Staff posting data updated successfully");
 
                                 if (validOption == "internal")
                                 {
-
-
-                                    if (currentPostingData.department is not null)
+                                    if (currentPostingData.departmentId != Guid.Empty)
                                     {
+                                        _dbContext.Entry(currentPostingData).State = EntityState.Detached;
                                         var isDepartmentChanged = currentPostingData.departmentId != request.departmentId;
                                         var isUnitChanged = currentPostingData.unitId != request.unitId;
-
+                                        
                                         if (isDepartmentChanged || isUnitChanged)
                                         {
                                             var newStaffPostingHistory = new StaffPostingHistory
@@ -136,7 +133,6 @@ namespace HRM_SK.Features.Staff_Posting
                                     }
                                 }
 
-
                                 if (validOption == "external")
                                 {
                                     existingStaff.status = StaffStatusTypes.inActive;
@@ -147,8 +143,7 @@ namespace HRM_SK.Features.Staff_Posting
                                         DateOfSeparation = DateOnly.FromDateTime(DateTime.UtcNow),
                                         comment = "Staff separated due to external posting"
                                     };
-
-
+                                    
                                     var newStaffPostingHistory = new StaffPostingHistory
                                     {
                                         staffId = request.staffId,
@@ -173,7 +168,7 @@ namespace HRM_SK.Features.Staff_Posting
                                 currentPostingData.postingOption = validOption;
                                 currentPostingData.unitId = request?.unitId;
                                 currentPostingData.directorateId = request?.directorateId;
-
+                                
                                 await _dbContext.SaveChangesAsync();
                                 await dbTransaction.CommitAsync();
                                 return res;
