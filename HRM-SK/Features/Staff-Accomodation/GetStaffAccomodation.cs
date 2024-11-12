@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +57,7 @@ namespace HRM_SK.Features.Staff_Accomodation
             }).WithTags("Staff Accommodation Record")
                   .WithMetadata(new ProducesResponseTypeAttribute(typeof(staffAccomodationResponseDto), StatusCodes.Status200OK))
                   .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+                  .WithGroupName(SwaggerEndpointDefintions.Planning)
               ;
         }
     }

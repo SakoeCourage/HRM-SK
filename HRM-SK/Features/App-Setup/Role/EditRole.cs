@@ -2,6 +2,7 @@
 using FluentValidation;
 using HRM_BACKEND_VSA.Features.Role;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -105,6 +106,8 @@ public class EditRoleEndpooint : ICarterModule
             }
 
             return Results.Ok(response.Value);
-        }).WithTags("Setup-Role");
+        }).WithTags("Setup-Role")
+        .WithGroupName(SwaggerEndpointDefintions.Setup)
+            ;
     }
 }

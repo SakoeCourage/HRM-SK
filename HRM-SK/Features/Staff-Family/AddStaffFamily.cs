@@ -3,6 +3,7 @@ using Carter;
 using FluentValidation;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -143,6 +144,8 @@ public class MapAddStaffFamilyEndpoint : ICarterModule
 
             return Results.BadRequest("Something Went Wrong");
 
-        }).WithTags("Staff Family Record");
+        }).WithTags("Staff Family Record")
+            .WithGroupName(SwaggerEndpointDefintions.Planning)
+            ;
     }
 }

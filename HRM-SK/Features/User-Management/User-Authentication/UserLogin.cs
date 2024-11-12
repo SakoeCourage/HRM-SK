@@ -2,6 +2,7 @@
 using Carter;
 using FluentValidation;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Providers;
 using HRM_SK.Serivices.Mail_Service;
 using HRM_SK.Services.SMS_Service;
@@ -111,6 +112,8 @@ public class MappUserLoginEndpoint : ICarterModule
         .WithMetadata(new ProducesResponseTypeAttribute(typeof(UserLoginResponse), StatusCodes.Status200OK))
         .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status422UnprocessableEntity))
         .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest))
-        .WithTags("User Authentication");
+        .WithTags("User Authentication")
+        .WithGroupName(SwaggerEndpointDefintions.UserManagement)
+        ;
     }
 }

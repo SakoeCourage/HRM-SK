@@ -4,6 +4,7 @@ using FluentValidation;
 using HRM_SK.Contracts;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Serivices.Mail_Service;
 using HRM_SK.Shared;
 using MediatR;
@@ -171,6 +172,7 @@ public class MapNewStaffAppointmentEndpoint : ICarterModule
             }
             return Results.BadRequest();
         }).WithTags("Staff-Appointment")
+        .WithGroupName(SwaggerEndpointDefintions.AppoinmentAndSeparation)
             ;
     }
 }

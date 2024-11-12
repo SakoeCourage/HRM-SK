@@ -2,6 +2,7 @@
 using FluentValidation;
 using HRM_SK.Contracts;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -117,7 +118,9 @@ namespace HRM_SK.Features.Staff_Seperation
                     return Results.UnprocessableEntity(response.Error);
                 }
                 return Results.BadRequest();
-            }).WithTags("Staff-Separation");
+            }).WithTags("Staff-Separation")
+            .WithGroupName(SwaggerEndpointDefintions.AppoinmentAndSeparation)
+                ;
         }
     }
 }

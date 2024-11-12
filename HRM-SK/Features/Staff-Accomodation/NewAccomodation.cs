@@ -3,6 +3,7 @@ using Carter;
 using FluentValidation;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -129,7 +130,9 @@ namespace HRM_SK.Features.Staff_Accomodation
 
                 return Results.BadRequest("Something Went Wrong");
 
-            }).WithTags("Staff Accommodation Record");
+            }).WithTags("Staff Accommodation Record")
+                .WithGroupName(SwaggerEndpointDefintions.Planning)
+                ;
         }
     }
 }

@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,6 @@ builder.Services.AddDbContext<DatabaseContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     .EnableSensitiveDataLogging();
     ;
-
 });
 
 builder.Services.AddRateLimiter(_ => _
@@ -116,8 +116,17 @@ if (app.Environment.IsDevelopment())
 
 }
 
+
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.DocumentTitle = "HRM-SK";
+    var endpointDefinitions = typeof(SwaggerEndpointDefintions).GetFields(BindingFlags.Public | BindingFlags.Static);
+    foreach (var definitions in endpointDefinitions)
+    {
+      c.SwaggerEndpoint($"/swagger/{definitions.GetValue(null)?.ToString()}/swagger.json",definitions.GetValue(null)?.ToString());
+    }
+});
 app.UseCors(MyAllowSpecificOrigins);
 app.UseRateLimiter();
 

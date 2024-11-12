@@ -2,6 +2,7 @@
 using HRM_BACKEND_VSA.Features.Role;
 using HRM_SK.Database;
 using HRM_SK.Entities;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using HRM_SK.Utilities;
 using MediatR;
@@ -80,6 +81,7 @@ public class GetRolesEndpoint : ICarterModule
             .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
             .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<Role>), StatusCodes.Status200OK))
             .WithTags("Setup-Role")
+            .WithGroupName(SwaggerEndpointDefintions.Setup)
             ;
     }
 }

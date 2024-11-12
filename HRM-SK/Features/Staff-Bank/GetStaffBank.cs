@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -60,7 +61,9 @@ namespace HRM_SK.Features.Staff_Bank
                 return Results.BadRequest("Something Went Wrong");
 
             }).WithMetadata(new ProducesResponseTypeAttribute(typeof(StaffBankResponseDto), StatusCodes.Status200OK))
-                .WithTags("Staff Bank Record");
+                .WithTags("Staff Bank Record")
+                .WithGroupName(SwaggerEndpointDefintions.Planning)
+                ;
         }
     }
 

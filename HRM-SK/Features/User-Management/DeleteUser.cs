@@ -1,5 +1,6 @@
 ﻿using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +57,8 @@ public class MapDeleteUserEndPoint : ICarterModule
             }
 
             return Results.BadRequest();
-        }).WithTags("User Management");
+        }).WithTags("User Management")
+        .WithGroupName(SwaggerEndpointDefintions.UserManagement)
+            ;
     }
 }

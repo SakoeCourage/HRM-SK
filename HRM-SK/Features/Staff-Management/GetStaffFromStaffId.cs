@@ -4,6 +4,7 @@ using HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio;
 using HRM_SK.Contracts;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -170,6 +171,7 @@ public class MapGetStaffFromStaffIDRequest : ICarterModule
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(StaffDto), StatusCodes.Status200OK))
           .WithTags("Staff Management")
+          .WithGroupName(SwaggerEndpointDefintions.Planning)
             ;
     }
 }

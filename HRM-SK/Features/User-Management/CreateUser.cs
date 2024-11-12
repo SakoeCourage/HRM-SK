@@ -2,6 +2,7 @@
 using FluentValidation;
 using HRM_SK.Database;
 using HRM_SK.Entities;
+using HRM_SK.Extensions;
 using HRM_SK.Serivices.Mail_Service;
 using HRM_SK.Services.SMS_Service;
 using HRM_SK.Shared;
@@ -150,6 +151,8 @@ public class MapCreateUserEndPoint : ICarterModule
             }
 
             return Results.BadRequest();
-        }).WithTags("User Management");
+        }).WithTags("User Management")
+        .WithGroupName(SwaggerEndpointDefintions.UserManagement)
+            ;
     }
 }

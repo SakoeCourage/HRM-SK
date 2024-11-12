@@ -1,6 +1,7 @@
 ﻿using Carter;
 using HRM_SK;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Providers;
 using HRM_SK.Shared;
 using HRM_SK.Utilities;
@@ -88,6 +89,7 @@ public class MapGetAuthUserNotificationList : ICarterModule
         .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status401Unauthorized))
         .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status422UnprocessableEntity))
         .WithTags("User Authentication")
+        .WithGroupName(SwaggerEndpointDefintions.UserManagement)
             ;
     }
 }

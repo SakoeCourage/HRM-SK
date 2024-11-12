@@ -1,6 +1,7 @@
 ﻿using Carter;
 using FluentValidation;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -94,6 +95,9 @@ public class MapAddBankEndpint : ICarterModule
                 }
                 return Results.Ok(response.Value);
             }
-        ).WithTags("Setup-Bank");
+        ).WithTags("Setup-Bank")
+        .WithGroupName(SwaggerEndpointDefintions.Setup)
+        
+            ;
     }
 }

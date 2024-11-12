@@ -5,6 +5,7 @@ using HRM_SK.Contracts;
 using HRM_SK.Database;
 using HRM_SK.Entities.HRMActivities;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Serivices.Mail_Service;
 using HRM_SK.Shared;
 using MediatR;
@@ -252,6 +253,8 @@ public class MapNewStaffPostingEndpoint : ICarterModule
                 return Results.UnprocessableEntity(response.Error);
             }
             return Results.BadRequest();
-        }).WithTags("Staff-Posting-Transfer");
+        }).WithTags("Staff-Posting-Transfer")
+        .WithGroupName(SwaggerEndpointDefintions.PostingAndTransfer)
+            ;
     }
 }

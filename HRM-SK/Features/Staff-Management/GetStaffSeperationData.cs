@@ -1,6 +1,7 @@
 ﻿using Carter;
 using HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -94,6 +95,7 @@ public class GetStaffSeperationDataRequestEnpoint : ICarterModule
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(List<staffTransferHistoryDto>), StatusCodes.Status200OK))
           .WithTags("Staff-Posting-Transfer")
+          .WithGroupName(SwaggerEndpointDefintions.Planning)
             ;
     }
 }

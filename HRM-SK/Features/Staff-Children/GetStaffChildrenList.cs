@@ -1,5 +1,6 @@
 ﻿using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Features.Staff_Children;
 using HRM_SK.Shared;
 using MediatR;
@@ -70,6 +71,7 @@ public class MapGetChildrenRecordEndpoint : ICarterModule
         }).WithTags("Staff Children Record")
               .WithMetadata(new ProducesResponseTypeAttribute(typeof(List<staffChildDto>), StatusCodes.Status200OK))
               .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+              .WithGroupName(SwaggerEndpointDefintions.Planning)
           ;
     }
 }

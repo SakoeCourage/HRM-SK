@@ -288,6 +288,7 @@ public class MapUpdateStaffioEndpint(IMapper mapper) : ICarterModule
         .Accepts<AddStaffBioRequest>("multipart/form-data")
         .WithTags("Staff Management")
         .DisableAntiforgery()
+        .WithGroupName(SwaggerEndpointDefintions.Planning)
         ;
     }
 }

@@ -3,6 +3,7 @@ using Carter;
 using FluentValidation;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -130,6 +131,8 @@ public class MappStaffPLEndpoint : ICarterModule
 
             return Results.BadRequest("Something Went Wrong");
 
-        }).WithTags("Staff Professional License Record");
+        }).WithTags("Staff Professional License Record")
+            .WithGroupName(SwaggerEndpointDefintions.Planning)
+            ;
     }
 }

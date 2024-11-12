@@ -3,14 +3,22 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using static HRM_SK.Features.Staff_Management.GetStaffPostingTransfersSeparationListt;
+using System.Reflection;
 
 namespace HRM_SK.Extensions
 {
-
+    public static class SwaggerEndpointDefintions
+    {
+        public static string UserManagement = "User Management";
+        public static string Setup = "Setup";
+        public static string Planning = "Planning";
+        public static string PostingAndTransfer = "Posting and Transfer";
+        public static string AppoinmentAndSeparation = "Appointment and Separation";
+        public static string TestFeature = "Test Features";
+    }
 
     public static class SwaggerDoc
     {
-
         public static List<Type> enumTypes = new List<Type>
         {
             typeof(StaffListFilter),
@@ -54,7 +62,8 @@ namespace HRM_SK.Extensions
                                 Schema = new OpenApiSchema
                                 {
                                     Type = "object",
-                                    Properties = fileParams.ToDictionary(param => param, param => new OpenApiSchema { Type = "string", Format = "binary" }),
+                                    Properties = fileParams.ToDictionary(param => param,
+                                        param => new OpenApiSchema { Type = "string", Format = "binary" }),
                                     Required = fileParams.ToHashSet()
                                 }
                             }
@@ -64,11 +73,15 @@ namespace HRM_SK.Extensions
             }
         }
 
-
         public static void OpenAuthentication(SwaggerGenOptions option)
         {
             option.SwaggerDoc("v1", new OpenApiInfo { Title = "HRM-SK API", Version = "v1" });
-
+            var endpointDefinitions = typeof(SwaggerEndpointDefintions).GetFields(BindingFlags.Public | BindingFlags.Static);
+            foreach (var definitions in endpointDefinitions)
+            {
+                option.SwaggerDoc(definitions.GetValue(null)?.ToString(), new OpenApiInfo { Title = "HRM-SK API", Version = "v1" });
+            }
+            
             MapEnumsToString(option, enumTypes);
 
             option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -83,22 +96,22 @@ namespace HRM_SK.Extensions
             option.OperationFilter<SwaggerFileOperationFilter>();
             option.SchemaFilter<EnumSchemaFilter>();
             option.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-        {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] { }
                 }
-            },
-            new string[]{}
+            });
+            
+            option.DocInclusionPredicate((documentName, apiDescription) => apiDescription.GroupName == documentName);
         }
-    });
-        }
-
-
     }
 
     public class EnumSchemaFilter : ISchemaFilter

@@ -1,6 +1,7 @@
 ﻿using Carter;
 using FluentValidation;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -109,6 +110,8 @@ public class MapUpdateCategoryEndpoint : ICarterModule
 
         }).WithTags("Setup-Category")
               .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
-              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest));
+              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+              .WithGroupName(SwaggerEndpointDefintions.Setup)
+              ;
     }
 }

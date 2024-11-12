@@ -1,5 +1,6 @@
 ﻿using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using HRM_SK.Utilities;
 using MediatR;
@@ -108,6 +109,8 @@ public class MapGetClubListEnpoint : ICarterModule
             return Results.BadRequest("Empty Result");
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<UserStaffRoleDto>), StatusCodes.Status200OK))
-          .WithTags("User Management");
+          .WithTags("User Management")
+          .WithGroupName(SwaggerEndpointDefintions.UserManagement)
+          ;
     }
 }

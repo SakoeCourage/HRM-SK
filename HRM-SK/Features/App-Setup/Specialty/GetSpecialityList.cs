@@ -1,5 +1,6 @@
 ﻿using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using HRM_SK.Utilities;
 using MediatR;
@@ -74,7 +75,9 @@ public class MapGetSpecialityListEndpoint : ICarterModule
             return Results.BadRequest("Empty Result");
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<HRM_SK.Entities.Speciality>), StatusCodes.Status200OK))
-          .WithTags("Setup-Staff-Speciality");
+          .WithTags("Setup-Staff-Speciality")
+          .WithGroupName(SwaggerEndpointDefintions.Setup)
+          ;
     }
 
 }

@@ -3,6 +3,7 @@ using Carter;
 using FluentValidation;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -129,7 +130,9 @@ namespace HRM_SK.Features.Staff_Bank
 
                 return Results.BadRequest("Something Went Wrong");
 
-            }).WithTags("Staff Bank Record");
+            }).WithTags("Staff Bank Record")
+                .WithGroupName(SwaggerEndpointDefintions.Planning)
+                ;
         }
     }
 }

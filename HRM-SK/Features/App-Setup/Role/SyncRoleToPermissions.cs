@@ -3,6 +3,7 @@ using FluentValidation;
 using HRM_BACKEND_VSA.Features.Role;
 using HRM_SK.Database;
 using HRM_SK.Entities;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -132,6 +133,7 @@ public class SyncRolePermissionEndpoint : ICarterModule
 
             return Results.NoContent();
         }).WithTags("Setup-Role")
+        .WithGroupName(SwaggerEndpointDefintions.Setup)
             ;
     }
 }

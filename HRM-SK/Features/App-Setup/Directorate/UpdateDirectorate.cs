@@ -2,6 +2,7 @@
 using Carter;
 using FluentValidation;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -106,6 +107,8 @@ public class MapUpdateDirectorateEndpoint : ICarterModule
 
         }).WithTags("Setup-Directorate")
               .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent))
-              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest));
+              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+              .WithGroupName(SwaggerEndpointDefintions.Setup)
+              ;
     }
 }

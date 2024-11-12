@@ -1,6 +1,7 @@
 ﻿using Carter;
 using HRM_SK.Database;
 using HRM_SK.Entities;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -82,6 +83,8 @@ public class MapGetCategoryFromGradeId : ICarterModule
         }).WithTags("Setup-Grade")
                .WithDescription("Get category and specialty list from grade id")
               .WithMetadata(new ProducesResponseTypeAttribute(typeof(Category), StatusCodes.Status200OK))
-              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest));
+              .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
+              .WithGroupName(SwaggerEndpointDefintions.Setup)
+               ;
     }
 }

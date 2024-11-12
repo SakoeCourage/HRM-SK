@@ -1,5 +1,6 @@
 ﻿using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -67,6 +68,7 @@ public class GetDirectorateByIdEndpoint : ICarterModule
         })
             .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
             .WithMetadata(new ProducesResponseTypeAttribute(typeof(HRM_SK.Entities.Directorate), StatusCodes.Status200OK))
+            .WithGroupName(SwaggerEndpointDefintions.Setup)
             .WithTags("Setup-Directorate")
             ;
     }

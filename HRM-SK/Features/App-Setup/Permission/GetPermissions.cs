@@ -2,6 +2,7 @@
 using HRM_BACKEND_VSA.Features.Permission;
 using HRM_SK.Database;
 using HRM_SK.Entities;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using HRM_SK.Utilities;
 using MediatR;
@@ -78,6 +79,7 @@ public class getPermissionsEndpoint : ICarterModule
             .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
             .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<Permission>), StatusCodes.Status200OK))
             .WithTags("Setup-Permission")
+            .WithGroupName(SwaggerEndpointDefintions.Setup)
             ;
     }
 }

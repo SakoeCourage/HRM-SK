@@ -38,7 +38,7 @@ public class RequestLoggerMiddleware: IAppMiddleware
             return;
         }
         await next();
-
+        
         stopwatch.Stop();
         _logger.LogInformation("Finished handling request:{RequestMethod}  {RequestPath} in {Duration} ms",
             context.Request.Method, context.Request.Path, stopwatch.ElapsedMilliseconds);

@@ -1,5 +1,6 @@
 ﻿using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using HRM_SK.Utilities;
 using MediatR;
@@ -73,7 +74,9 @@ public class GetBankListEndpoint : ICarterModule
             return Results.BadRequest("Empty Result");
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<HRM_SK.Entities.Bank>), StatusCodes.Status200OK))
-          .WithTags("Setup-Bank");
+          .WithTags("Setup-Bank")
+          .WithGroupName(SwaggerEndpointDefintions.Setup)
+          ;
     }
 
 }

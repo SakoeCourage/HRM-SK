@@ -270,7 +270,9 @@ public class MapAddStaffEndpoint : ICarterModule
             })
             .WithTags("Staff Management")
             .Accepts<AddStaffBioRequest>("multipart/form-data")
-            .DisableAntiforgery();
+            .DisableAntiforgery()
+            .WithGroupName(SwaggerEndpointDefintions.Planning)
+            ;
     }
 
 }

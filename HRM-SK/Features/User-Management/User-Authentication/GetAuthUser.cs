@@ -1,4 +1,5 @@
 ﻿using Carter;
+using HRM_SK.Extensions;
 using HRM_SK.Providers;
 using HRM_SK.Shared;
 using MediatR;
@@ -56,6 +57,7 @@ public class MapGetAuhUserEndpoint : ICarterModule
         .WithMetadata(new ProducesResponseTypeAttribute(StatusCodes.Status401Unauthorized))
         .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status422UnprocessableEntity))
         .WithTags("User Authentication")
+        .WithGroupName(SwaggerEndpointDefintions.UserManagement)
             ;
     }
 }

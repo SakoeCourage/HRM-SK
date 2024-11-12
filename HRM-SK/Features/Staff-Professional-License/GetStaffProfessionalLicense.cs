@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Carter;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,8 @@ public class MapGetStaffProfessionalLicenseEndpoint : ICarterModule
         })
         .WithTags("Staff Professional License Record")
         .WithMetadata(new ProducesResponseTypeAttribute(typeof(StaffProfessionalLicenseDto), StatusCodes.Status200OK))
+        .WithGroupName(SwaggerEndpointDefintions.Planning)
         ;
+        
     }
 }

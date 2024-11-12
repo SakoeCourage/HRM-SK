@@ -3,6 +3,7 @@ using Carter;
 using FluentValidation;
 using HRM_SK.Database;
 using HRM_SK.Entities.Staff;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -119,6 +120,8 @@ public class MapStaffAddChildEndpoint : ICarterModule
         })
             .WithTags("Staff Children Record")
             .WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status422UnprocessableEntity))
-            .WithMetadata(new ProducesResponseTypeMetadata(StatusCodes.Status200OK));
+            .WithMetadata(new ProducesResponseTypeMetadata(StatusCodes.Status200OK))
+            .WithGroupName(SwaggerEndpointDefintions.Planning)
+            ;
     }
 }

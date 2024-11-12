@@ -1,6 +1,7 @@
 ﻿using Carter;
 using FluentValidation;
 using HRM_SK.Database;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -92,6 +93,8 @@ public class MapCreateCategoryEndpoint : ICarterModule
             return Results.BadRequest();
         }).WithTags("Setup-Category").
             WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status422UnprocessableEntity))
-          .WithMetadata(new ProducesResponseTypeAttribute(typeof(Guid), StatusCodes.Status200OK));
+          .WithMetadata(new ProducesResponseTypeAttribute(typeof(Guid), StatusCodes.Status200OK))
+          .WithGroupName(SwaggerEndpointDefintions.Setup)
+            ;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Carter;
 using HRM_SK.Database;
 using HRM_SK.Entities;
+using HRM_SK.Extensions;
 using HRM_SK.Shared;
 using HRM_SK.Utilities;
 using MediatR;
@@ -75,7 +76,9 @@ public class GetCommunityListEndpoint : ICarterModule
             return Results.BadRequest("Empty Result");
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<Category>), StatusCodes.Status200OK))
-          .WithTags("Setup-Category");
+          .WithTags("Setup-Category")
+          .WithGroupName(SwaggerEndpointDefintions.Setup)
+          ;
     }
 
 }

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Text.Json.Serialization;
+using HRM_SK.Extensions;
 using static HRM_SK.Contracts.UrlNavigation;
 using static HRM_SK.Features.Staff_Management.GetStaffPostingTransfersSeparationListt;
 
@@ -184,7 +185,9 @@ public class GetStaffPostingTransfersSeparationListtEndpoint : ICarterModule
             return Results.BadRequest("Empty Result");
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<StaffPostingListResponseDto>), StatusCodes.Status200OK))
-          .WithTags("Staff-Posting-Transfer");
+          .WithTags("Staff-Posting-Transfer")
+          .WithGroupName(SwaggerEndpointDefintions.PostingAndTransfer)
+          ;
     }
 
 }

@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Linq.Expressions;
 using System.Text.Json.Serialization;
+using HRM_SK.Extensions;
 using static HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio.GetStaffBioList;
 using static HRM_SK.Contracts.UrlNavigation;
 
@@ -161,18 +162,16 @@ namespace HRM_BACKEND_VSA.Domains.Staffs.Staff_Bio
                 if (request.search is not null)
                 {
                     query = query.Where(u =>
-                    EF.Functions.Like(u.staffIdentificationNumber, $"%{request.search}%")
-                    || EF.Functions.Like(u.firstName, $"%{request.search}%")
-                    || EF.Functions.Like(u.lastName, $"%{request.search}%")
-                     || EF.Functions.Like(u.email, $"%{request.search}%")
+                    EF.Functions.Like(u.staffIdentificationNumber.ToLower(), $"%{request.search.ToLower()}%")
+                    || EF.Functions.Like(u.firstName.ToLower(), $"%{request.search.ToLower()}%")
+                    || EF.Functions.Like(u.lastName.ToLower(), $"%{request.search.ToLower()}%")
+                     || EF.Functions.Like(u.email.ToLower(), $"%{request.search.ToLower()}%")
                     );
                 }
 
                 var queryBuilder = new QueryBuilder<Staff>(query.AsSingleQuery())
                         .WithSort(request?.sort)
                         .Paginate(request?.pageNumber, request?.pageSize);
-
-
 
                 var cacheKey = $"staff-list-{request?.pageNumber}-{request?.pageSize}-{request?.search}-{request?.status}-{request?.filter}-{request?.whereHas}-{request?.departmentId}-{request?.unitId}-{request?.directorateId}-{request?.sort}";
 
@@ -307,7 +306,9 @@ public class GetStaffBioListListEndpoint : ICarterModule
             return Results.BadRequest("Empty Result");
         }).WithMetadata(new ProducesResponseTypeAttribute(typeof(Error), StatusCodes.Status400BadRequest))
           .WithMetadata(new ProducesResponseTypeAttribute(typeof(Paginator.PaginatedData<StaffListResponseDto>), StatusCodes.Status200OK))
-          .WithTags("Staff Management");
+          .WithTags("Staff Management")
+          .WithGroupName(SwaggerEndpointDefintions.Planning)
+          ;
     }
 
 }

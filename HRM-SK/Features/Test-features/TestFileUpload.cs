@@ -1,4 +1,5 @@
 ﻿using Carter;
+using HRM_SK.Extensions;
 using HRM_SK.Serivices.ImageKit;
 using MediatR;
 
@@ -36,7 +37,9 @@ namespace HRM_SK.Features.Test_features
                 await sender.Send(new TestFileUpload.TestFileUploadRequest { image = image });
                 return Results.Ok("");
             }).WithTags("Test Features")
-            .DisableAntiforgery();
+            .DisableAntiforgery()
+            .WithGroupName(SwaggerEndpointDefintions.TestFeature)
+            ;
         }
     }
 }
